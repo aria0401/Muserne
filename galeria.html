@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Muserne</title>
+    <link href="https://fonts.googleapis.com/css?family=Caveat|Raleway&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <header>
+      <div class="site_nav">
+        <a href="index.html">
+          <div class="logo"></div>
+        </a>
+        <nav>
+          <button class="filter" data-filter="alle"><a href="galeria.html"> Gallery</a></button>
+          <button class="filter" data-filter="olga"><a href="musas.html?filter=olga"> Olga</a></button>
+          <button class="filter" data-filter="marietherese"><a href="musas.html?filter=marietherese"> Marie</a></button>
+          <button class="filter" data-filter="doramaar"><a href="musas.html?filter=doramaar"> Dora</a></button>
+          <button class="filter" data-filter="francoise"><a href="musas.html?filter=francoise"> Francoise</a></button>
+          <button class="filter" data-filter="jacqueline"><a href="musas.html?filter=jacqueline"> Jacqueline</a></button>
+        </nav>
+      </div>
+      <div class="mobil_nav">
+        <a href="index.html">
+          <div class="logo"></div>
+        </a>
+        <nav>
+          <div id="menuknap">☰</div>
+          <ul id="menu" class="hidden">
+            <li><a href="index.html">Home</a></li>
+            <li>
+              <button class="filter" data-filter="alle"><a href="galeria.html"> Gallery</a></button>
+            </li>
+            <li>
+              <button class="filter" data-filter="olga"><a href="musas.html?filter=olga"> Olga</a></button>
+            </li>
+            <li>
+              <button class="filter" data-filter="marietherese"><a href="musas.html?filter=marietherese"> Marie</a></button>
+            </li>
+            <li>
+              <button class="filter" data-filter="doramaar"><a href="musas.html?filter=doramaar"> Dora</a></button>
+            </li>
+            <li>
+              <button class="filter" data-filter="francoise"><a href="musas.html?filter=francoise"> Francoise</a></button>
+            </li>
+            <li>
+              <button class="filter" data-filter="jacqueline"><a href="musas.html?filter=jacqueline"> Jacqueline</a></button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section id="popup" class="skjul">
+      <button>&lt; Back to Gallery</button>
+      <article id="eachMuse_popup">
+        <h1>Navn</h1>
+        <div class="foto_text">
+          <img src="" />
+        </div>
+      </article>
+    </section>
+
+    <template id="template_grid">
+      <article id="each_article" class="each_popup">
+        <img src="" alt="" />
+      </article>
+    </template>
+
+    <main id="grid"></main>
+
+    <p class="copyright">© Pablo Picasso</p>
+
+    <footer>
+      <p id="footer_txt"></p>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+  <script>
+    let muser = [];
+    let filter = "alle";
+    const containerGrid = document.querySelector("#grid");
+
+    let detaljeGrid = document.querySelector("#popup");
+
+    const endpoint =
+      "https://spreadsheets.google.com/feeds/list/13kjSiYnNHiUNoKXbuB1oO7nbL1k3Zawd7irhZpyQuBQ/od6/public/values?alt=json&fbclid=IwAR3XOj8J3dAUTeicEAn1G3f5hcvb-OJk3wFgh1EZkJfCUjl55bTUHYDy6Sk";
+    document.addEventListener("DOMContentLoaded", start);
+
+    function start() {
+      hentData();
+    }
+
+    async function hentData() {
+      const response = await fetch(endpoint);
+      let allJson = await response.json();
+      muser = allJson.feed.entry;
+      addEventToButtons();
+      visMuser();
+    }
+
+    function addEventToButtons() {
+      document.querySelectorAll(".filter").forEach((elm) => {
+        elm.addEventListener("click", filtrering);
+      });
+    }
+
+    function filtrering() {
+      containerGrid.style.display = "grid";
+      filter = this.dataset.filter;
+      document.querySelectorAll(".filter").forEach((elm) => {
+        elm.classList.remove("valgt");
+      });
+      this.classList.add("valgt");
+      visMuser();
+    }
+
+    function visMuser() {
+      containerGrid.innerHTML = "";
+      const muserTemplateGrid = document.querySelector("#template_grid");
+
+      muser.forEach((eachMuse) => {
+        if (filter == "alle") {
+          const klon = muserTemplateGrid.cloneNode(true).content;
+          klon.querySelector("img").src = "imgs/" + eachMuse.gsx$billede.$t + ".jpg";
+          klon.querySelector(".each_popup").addEventListener("click", function () {
+            visDetaljerPopUp(eachMuse);
+          });
+
+          containerGrid.appendChild(klon);
+        }
+      });
+    }
+
+    function visDetaljerPopUp(eachMuse) {
+      console.log(detaljeGrid);
+      console.log("visDetaljerPopUp");
+      console.log(eachMuse.gsx$maleri.$t);
+      detaljeGrid.classList.remove("skjul");
+      detaljeGrid.querySelector("button").addEventListener("click", () => detaljeGrid.classList.add("skjul"));
+      detaljeGrid.querySelector("h1").textContent = eachMuse.gsx$maleri.$t;
+      detaljeGrid.querySelector("img").src = "imgs/" + eachMuse.gsx$billede.$t + ".jpg";
+    }
+  </script>
+</html>

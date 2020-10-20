@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Muserne</title>
+    <link href="https://fonts.googleapis.com/css?family=Caveat|Raleway&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      #musa_details {
+        opacity: 1;
+      }
+
+      #scroll {
+        display: flex;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="site_nav">
+        <a href="index.html">
+          <div class="logo"></div>
+        </a>
+        <nav>
+          <button class="filter" data-filter="alle"><a href="galeria.html"> Gallery</a></button>
+          <button class="filter" data-filter="olga"><a href="musas.html?filter=olga"> Olga</a></button>
+          <button class="filter" data-filter="marietherese"><a href="musas.html?filter=marietherese"> Marie</a></button>
+          <button class="filter" data-filter="doramaar"><a href="musas.html?filter=doramaar"> Dora</a></button>
+          <button class="filter" data-filter="francoise"><a href="musas.html?filter=francoise"> Francoise</a></button>
+          <button class="filter" data-filter="jacqueline"><a href="musas.html?filter=jacqueline"> Jacqueline</a></button>
+        </nav>
+      </div>
+      <div class="mobil_nav">
+        <a href="index.html">
+          <div class="logo"></div>
+        </a>
+        <nav>
+          <div id="menuknap">☰</div>
+          <ul id="menu" class="hidden">
+            <li><a href="index.html">Home</a></li>
+            <li>
+              <button class="filter" data-filter="alle"><a href="galeria.html"> Gallery</a></button>
+            </li>
+            <li>
+              <button class="filter" data-filter="olga"><a href="musas.html?filter=olga"> Olga</a></button>
+            </li>
+            <li>
+              <button class="filter" data-filter="marietherese"><a href="musas.html?filter=marietherese"> Marie</a></button>
+            </li>
+            <li>
+              <button class="filter" data-filter="doramaar"><a href="musas.html?filter=doramaar"> Dora</a></button>
+            </li>
+            <li>
+              <button class="filter" data-filter="francoise"><a href="musas.html?filter=francoise"> Francoise</a></button>
+            </li>
+            <li>
+              <button class="filter" data-filter="jacqueline"><a href="musas.html?filter=jacqueline"> Jacqueline</a></button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section id="musa_section">
+      <div id="musa_details">
+        <div class="col col1">
+          <img src="" alt="" />
+        </div>
+
+        <div class="col col2" id="info_muser">
+          <h1 class="maleri"></h1>
+          <!-- <p class="year"></p> -->
+          <p class="musetext"></p>
+        </div>
+      </div>
+      <div id="musa_scroll">
+        <main id="scroll"></main>
+      </div>
+
+      <p class="copyright">© Pablo Picasso</p>
+
+      <footer>
+        <p id="footer_txt"></p>
+      </footer>
+    </section>
+
+    <template id="template_scroll">
+      <article id="scroll_detail" class="each_popup">
+        <img id="image_scroll" src="" alt="" />
+      </article>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+  <script>
+    let muser = [];
+    const urlParams = new URLSearchParams(window.location.search);
+    let filter = urlParams.get("filter");
+    const containerScroll = document.querySelector("#scroll");
+
+    let detaljeScroll = document.querySelector("#musa_details");
+
+    const endpoint =
+      "https://spreadsheets.google.com/feeds/list/13kjSiYnNHiUNoKXbuB1oO7nbL1k3Zawd7irhZpyQuBQ/od6/public/values?alt=json&fbclid=IwAR3XOj8J3dAUTeicEAn1G3f5hcvb-OJk3wFgh1EZkJfCUjl55bTUHYDy6Sk";
+    document.addEventListener("DOMContentLoaded", start);
+
+    function start() {
+      hentData();
+    }
+
+    async function hentData() {
+      const response = await fetch(endpoint);
+      let allJson = await response.json();
+      muser = allJson.feed.entry;
+      addEventToButtons();
+      visMuser();
+    }
+
+    function addEventToButtons() {
+      document.querySelectorAll(".filter").forEach((elm) => {
+        elm.addEventListener("click", filtrering);
+      });
+    }
+
+    function filtrering(event) {
+      filter = event.target.dataset.filter;
+
+      document.querySelectorAll(".filter").forEach((elm) => {
+        elm.classList.remove("valgt");
+      });
+      this.classList.add("valgt");
+      visMuser();
+    }
+
+    function visMuser() {
+      containerScroll.innerHTML = "";
+      const muserTemplateScroll = document.querySelector("#template_scroll");
+
+      muser.forEach((eachMuse) => {
+        if (filter == eachMuse.gsx$kategori.$t) {
+          const klonScroll = muserTemplateScroll.cloneNode(true).content;
+          klonScroll.querySelector("img").src = "imgs/" + eachMuse.gsx$billede.$t + ".jpg";
+          klonScroll.querySelector(".each_popup").addEventListener("click", function () {
+            visDetaljer(eachMuse);
+          });
+
+          visDetaljer(eachMuse);
+          containerScroll.appendChild(klonScroll);
+        }
+      });
+    }
+
+    function visDetaljer(eachMuse) {
+      detaljeScroll.querySelector(".maleri").textContent = eachMuse.gsx$maleri.$t;
+      // detaljeScroll.querySelector(".year").textContent = eachMuse.gsx$year.$t;
+      detaljeScroll.querySelector(".musetext").textContent = eachMuse.gsx$musetxt.$t;
+      detaljeScroll.querySelector("img").src = "imgs/" + eachMuse.gsx$billede.$t + ".jpg";
+      detaljeScroll.querySelector("img").alt = "billede af" + eachMuse.gsx$maleri.$t;
+    }
+  </script>
+</html>
