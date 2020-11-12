@@ -679,6 +679,19 @@ section {
   footer {
     margin-top: 6vh;
   }
+
+  #scroll,
+  .copyright {
+    margin-left: 6vw;
+  }
+
+  #musa_details img {
+    width: 68%;
+    margin-left: 4vw;
+  }
+  #musa_scroll {
+    margin-top: -20vh;
+  }
 }
 
 /*------------------------------MEDIAQUERY 1300px-----------------------*/
@@ -687,22 +700,29 @@ section {
   .logo {
     margin-right: 36vw;
   }
-  #musa_details img {
-    width: 85%;
+  #musa_details {
+    margin-top: 0vh;
   }
   .musas_content {
     margin-left: 12vw;
   }
 }
 
+/*------------------------------MEDIAQUERY 1400px-----------------------*/
+
+@media screen and (min-width: 1400px) {
+  #scroll_detail {
+    height: 10vw;
+  }
+
+  #scroll_detail img {
+    height: 12vw;
+  }
+}
+
 /*------------------------------MEDIAQUERY 1500px-----------------------*/
 
 @media screen and (min-width: 1500px) {
-  #musa_details {
-    margin-top: 0vh;
-    margin-bottom: -4vh;
-  }
-
   header {
     height: 20vh;
   }
@@ -715,7 +735,4 @@ section {
 /*------------------------------MEDIAQUERY 1600px-----------------------*/
 
 @media screen and (min-width: 1600px) {
-  #musa_details {
-    margin-bottom: -10vh;
-  }
 }
